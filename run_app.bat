@@ -1,0 +1,6 @@
+@echo off
+echo Starting E-Commerce Sales Prediction App...
+echo Activating Virtual Environment...
+set PYTHONPATH=
+D:\ml_env\Scripts\python.exe -m streamlit run app.py
+pause
