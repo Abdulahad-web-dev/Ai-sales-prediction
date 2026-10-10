@@ -7,7 +7,11 @@ python_version: "3.11"
 
 # E-Commerce Sales Prediction
 
-A Streamlit application that predicts the total sales value of a retail transaction from its quantity, unit price, product, and date/time features. The repository includes a trained model, an interface for interactive prediction, and deployment-ready files for a Hugging Face demo and API.
+A Streamlit application that predicts the total sales value of a retail transaction from its quantity, unit price, product, and date/time features. The repository includes a trained model, an interactive dashboard, and a deployed API.
+
+## Live Demo
+
+**🚀 Try it now:** [AI Sales Prediction - Streamlit App](https://ai-sales-prediction-nnspvvlyfibaadmqfxauxp.streamlit.app/)
 
 ## GitHub repository
 
@@ -47,7 +51,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Open the local URL printed by Streamlit, usually <http://localhost:8501>. The repository includes model files in `outputs/`, so you can launch the dashboard without first downloading the training data.
+Open the local URL printed by Streamlit, usually <http://localhost:8501>. The repository includes model files in `outputs/`, so you can launch the dashboard without first downloading the training dataset.
 
 On macOS or Linux, create and activate the environment with `python3 -m venv .venv` and `source .venv/bin/activate`, then install the requirements and run `streamlit run app.py` as above.
 
@@ -64,7 +68,7 @@ outputs/best_model_xgb.pkl
 outputs/label_encoder.pkl
 ```
 
-The Space README metadata selects `hf_app.py` as its entry point. Once the Space is built, its public host is shown on the Space page. The browser demo is served at `/`, the health check at `/health`, and the prediction endpoint at `/api/predict`.
+The Space README metadata selects `hf_app.py` as its entry point. Once the Space is built, its public host is shown on the Space page. The browser demo is served at `/`, the health check at `/health`.
 
 Send `POST /api/predict` a JSON body with an exact product description from `/api/products`, a positive integer quantity, a positive unit price in GBP, and an ISO 8601 transaction timestamp:
 
@@ -77,7 +81,7 @@ Send `POST /api/predict` a JSON body with an exact product description from `/ap
 }
 ```
 
-Successful responses contain `predicted_sales`, `currency`, and `model`. Invalid values and products not in the training catalog return HTTP 422. The public Space has no API key by default; call it from any client with the space URL.
+Successful responses contain `predicted_sales`, `currency`, and `model`. Invalid values and products not in the training catalog return HTTP 422. The public Space has no API key by default; call it from the browser or a server.
 
 Example Express-side request:
 
@@ -112,7 +116,7 @@ python convert_to_csv.py
 python pipeline.py
 ```
 
-The data is saved under `data/`, which is excluded from Git. The pipeline cleans the transactions, removes duplicates and invalid quantities/prices, creates `Sales` as `Quantity * UnitPrice`, enriches the data with temporal features, and compares the models.
+The data is saved under `data/`, which is excluded from Git. The pipeline cleans the transactions, removes duplicates and invalid quantities/prices, creates `Sales` as `Quantity * UnitPrice`, enriches the features with temporal and categorical information, and trains the models.
 
 The original data source is the [UCI Online Retail dataset](https://archive.ics.uci.edu/dataset/352/online+retail), containing transactions from a UK-based online retailer.
 
@@ -126,7 +130,7 @@ These metrics are from the included `outputs/results.csv`; they are a record of 
 | Random Forest | 0.987 | 6.711 | 0.477 |
 | XGBoost | 0.901 | 18.372 | 9.228 |
 
-The included `outputs/best_model_xgb.pkl` is a legacy filename: inspecting the saved artifact shows it loads as a scikit-learn `GradientBoostingRegressor`, not an XGBoost estimator. It requires scikit-learn compatibility and is used for inference in the app.
+The included `outputs/best_model_xgb.pkl` is a legacy filename: inspecting the saved artifact shows it loads as a scikit-learn `GradientBoostingRegressor`, not an XGBoost estimator. It requires scikit-learn 1.0.2 or later.
 
 ## Repository layout
 
@@ -147,8 +151,7 @@ outputs/                      Model, encoder, metrics, and training plots
 
 ## Notes
 
-- `outputs/best_model_xgb.pkl` and `outputs/label_encoder.pkl` are loaded by the app. If loading fails because of an environment or serialization incompatibility, the app attempts to train a fallback model automatically.
+- `outputs/best_model_xgb.pkl` and `outputs/label_encoder.pkl` are loaded by the app. If loading fails because of an environment or serialization incompatibility, the app attempts to train a fallback model.
 - The optional product URL autofill depends on the target website being publicly reachable and exposing a price in markup the app recognizes; it may not work for every site.
 - Training requires the UCI dataset and may take longer than starting the dashboard.
 - The included `run_app.bat` references a machine-specific Python environment. Use `streamlit run app.py` from the activated environment for a portable launch.
-
